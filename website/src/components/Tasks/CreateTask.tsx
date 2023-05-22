@@ -22,6 +22,7 @@ import { getTypeSafei18nKey } from "src/lib/i18n";
 import { TaskType } from "src/types/Task";
 import { CreateTaskReply } from "src/types/TaskResponses";
 import { CreateTaskType } from "src/types/Tasks";
+import { Select } from "@chakra-ui/react";
 
 const RenderedMarkdown = lazy(() => import("../Messages/RenderedMarkdown"));
 
@@ -39,6 +40,8 @@ export const CreateTask = ({
   const titleColor = useColorModeValue("gray.800", "gray.300");
   const tipColor = useColorModeValue("gray.600", "gray.400");
   const [inputText, setInputText] = useState("");
+  const [responseText, setResponseText] = useState("");
+  const [category, setCategory] = useState("");
   const [isDesktop] = useMediaQuery("(min-width: 800px)");
 
   const textChangeHandler = (text: string) => {
@@ -53,13 +56,37 @@ export const CreateTask = ({
     }
   };
 
+  const responseTextHandler = (text: string) => {
+    onReplyChanged({ text });
+    const isTextBlank = !text || /^\s*$/.test(text);
+    if (!isTextBlank) {
+      onValidityChanged("VALID");
+      setResponseText(text);
+    } else {
+      onValidityChanged("INVALID");
+      setResponseText("");
+    }
+  };
+
+  const categoryChanged = (option) => {
+    const value = option.target.value
+    onValidityChanged(!!value ? "VALID" : "INVALID")
+    setCategory(value);
+  }
+
+
   const previewContent = useMemo(
-    () => (
-      <Suspense fallback={inputText}>
-        <RenderedMarkdown markdown={inputText}></RenderedMarkdown>
-      </Suspense>
-    ),
-    [inputText]
+    () => {
+
+      const text = "**Prompt**: " + inputText + "\n\n**Response**: " + responseText + "\n\n**Category**: " + category
+
+      return (
+        <Suspense fallback={text}>
+          <RenderedMarkdown markdown={text}></RenderedMarkdown>
+        </Suspense>
+      )
+    },
+    [inputText, responseText, category]
   );
 
   useEffect(() => {
@@ -132,6 +159,28 @@ export const CreateTask = ({
                         minRows: 5,
                       }}
                     />
+
+
+                    <TrackedTextarea
+                      text={responseText}
+                      onTextChange={responseTextHandler}
+                      thresholds={{ low: 20, medium: 40, goal: 50 }}
+                      textareaProps={{
+                        placeholder: t(getTypeSafei18nKey(`tasks:${taskType.id}.supplied_response_placeholder`)),
+                        isDisabled,
+                        minRows: 5,
+                      }}
+                    />
+
+                    <Select onChange={categoryChanged} maxW="fit-content" pt="4">
+                      <option>Select a category</option>
+                      <option>Hardcoded Option A</option>
+                      <option>Hardcoded Option B</option>
+                      <option>Hardcoded Option C</option>
+                      <option>Hardcoded Option D</option>
+                    </Select>
+
+
                   </TabPanel>
                   <TabPanel p="0" pt="4">
                     {previewContent}

@@ -18,6 +18,7 @@
     "overview": "Create an initial message to send to the assistant",
     "instruction": "Provide the initial prompts",
     "response_placeholder": "Write your prompt here...",
+    "supplied_response_placeholder": "Write your response here...",
     "shotcut_tip": "Tip: You can use a keyboard shortcut to Review and Submit responses:"
   },
   "reply_as_user": {
