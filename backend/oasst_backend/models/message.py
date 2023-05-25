@@ -64,6 +64,7 @@ class Message(SQLModel, table=True):
     model_name: Optional[str] = Field(sa_column=sa.Column(sa.String(1024), nullable=True))
 
     emojis: Optional[dict[str, int]] = Field(default=None, sa_column=sa.Column(pg.JSONB), nullable=False)
+    category: str = Field(nullable=False, default='General')
     _user_emojis: Optional[list[str]] = PrivateAttr(default=None)
     _user_is_author: Optional[bool] = PrivateAttr(default=None)
     _user: Optional[bool] = PrivateAttr(default=None)

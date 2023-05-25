@@ -70,7 +70,14 @@ def request_task(
         pr.ensure_user_is_enabled()
 
         tm = TreeManager(db, pr)
-        task, message_tree_id, parent_message_id = tm.next_task(desired_task_type=request.type, lang=request.lang)
+
+        if request.type == 'assistant_reply' and request.message_id:
+            logger.debug(f"Assistant reply task for message ID {request.message_id}")
+            task, message_tree_id, parent_message_id = tm.get_assistant_task(request.message_id)
+            if not task:
+                raise OasstError
+        else:
+            task, message_tree_id, parent_message_id = tm.next_task(desired_task_type=request.type, lang=request.lang)
         pr.task_repository.store_task(task, message_tree_id, parent_message_id, request.collective)
 
     except OasstError:

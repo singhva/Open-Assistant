@@ -136,6 +136,7 @@ class TaskRequest(BaseModel):
     user: Optional[User] = Field(None, nullable=True)
     collective: bool = False
     lang: Optional[str] = Field(None, nullable=True)  # BCP 47
+    message_id: str = Field(None, nullable=True)
 
 
 class TaskAck(BaseModel):
@@ -347,6 +348,20 @@ class TextReplyToMessage(Interaction):
     user_message_id: str
     text: constr(min_length=1, strip_whitespace=True)
     lang: Optional[str]  # BCP 47
+    category: str
+    # assistant_response: Optional[str]
+
+
+class InitialPromptWithResponse(Interaction):
+    """A user has replied to a message with text."""
+
+    type: Literal["initial_prompt_with_response"] = "initial_prompt_with_response"
+    message_id: str
+    user_message_id: str
+    text: constr(min_length=1, strip_whitespace=True)
+    lang: Optional[str]  # BCP 47
+    category: str
+    assistant_response: Optional[str]
 
 
 class MessageRating(Interaction):
@@ -445,6 +460,7 @@ AnyInteraction = Union[
     MessageRating,
     MessageRanking,
     TextLabels,
+    InitialPromptWithResponse
 ]
 
 

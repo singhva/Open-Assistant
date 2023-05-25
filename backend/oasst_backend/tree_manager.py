@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from http import HTTPStatus
 from typing import Optional, Tuple
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import numpy as np
 import pydantic
@@ -11,6 +11,7 @@ import sqlalchemy as sa
 from loguru import logger
 from oasst_backend.api.v1.utils import prepare_conversation, prepare_conversation_message_list
 from oasst_backend.config import TreeManagerConfiguration, settings
+import oasst_backend.models.db_payload as db_payload
 from oasst_backend.models import (
     Message,
     MessageEmoji,
@@ -405,6 +406,12 @@ class TreeManager:
             for l in valid_labels
         ]
 
+    def get_assistant_task(self, message_id):
+        messages = self.pr.fetch_message_conversation(UUID(message_id))
+        conversation = prepare_conversation(messages)
+        task = protocol_schema.PrompterReplyTask(conversation=conversation)
+        return task, messages[-1].id, messages[-1].message_tree_id
+
     def next_task(
         self,
         desired_task_type: protocol_schema.TaskRequestType = protocol_schema.TaskRequestType.random,
@@ -736,6 +743,7 @@ class TreeManager:
                     lang=interaction.lang,
                     frontend_message_id=interaction.message_id,
                     user_frontend_message_id=interaction.user_message_id,
+                    category=interaction.category
                 )
 
                 if not message.parent_id:
@@ -743,6 +751,21 @@ class TreeManager:
                         f"TreeManager: Inserting new tree state for initial prompt {message.id=} [{message.lang}]"
                     )
                     self._insert_default_state(message.id, lang=message.lang)
+
+                    # new_message_id = uuid4()
+                    # logger.debug(f"Inserting reply {new_message_id} to original message")
+                    # pr.insert_message(
+                    #     message_id=new_message_id,
+                    #     frontend_message_id=''.join(random.sample(list('abcdefghijklmnopqrstuvwxyz0123456789'), 8)),
+                    #     parent_id=message.id,
+                    #     message_tree_id=message.id,
+                    #     task_id=uuid4(),
+                    #     role="assistant",
+                    #     payload=db_payload.MessagePayload(text=interaction.assistant_response),
+                    #     lang=interaction.lang or "en",
+                    #     depth=1,
+                    #     category=interaction.category
+                    # )
 
                 if not settings.DEBUG_SKIP_EMBEDDING_COMPUTATION:
                     try:
@@ -760,6 +783,38 @@ class TreeManager:
                         logger.error(
                             f"Could not compute toxicity for text reply to {interaction.message_id=} with {interaction.text=} by {interaction.user=}."
                         )
+
+            case protocol_schema.InitialPromptWithResponse:
+                logger.info("Inside InitialPromptWithResponse")
+                # here we store the text reply in the database
+                message = pr.store_text_reply(
+                    text=interaction.text,
+                    lang=interaction.lang,
+                    frontend_message_id=interaction.message_id,
+                    user_frontend_message_id=interaction.user_message_id,
+                    category=interaction.category
+                )
+
+                if not message.parent_id:
+                    logger.info(
+                        f"TreeManager: Inserting new tree state for initial prompt {message.id=} [{message.lang}]"
+                    )
+                    self._insert_default_state(message.id, lang=message.lang)
+
+                    new_message_id = uuid4()
+                    logger.debug(f"Inserting reply {new_message_id} to original message")
+                    pr.insert_message(
+                        message_id=new_message_id,
+                        frontend_message_id=''.join(random.sample(list('abcdefghijklmnopqrstuvwxyz0123456789'), 8)),
+                        parent_id=message.id,
+                        message_tree_id=message.id,
+                        task_id=uuid4(),
+                        role="assistant",
+                        payload=db_payload.MessagePayload(text=interaction.assistant_response),
+                        lang=interaction.lang or "en",
+                        depth=1,
+                        category=interaction.category
+                    )
 
             case protocol_schema.MessageRating:
                 logger.info(

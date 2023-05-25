@@ -198,8 +198,8 @@ class Settings(BaseSettings):
     DEBUG_ALLOW_SELF_LABELING: bool = False  # allow users to label their own messages
     DEBUG_ALLOW_SELF_RANKING: bool = False  # allow users to rank their own messages
     DEBUG_ALLOW_DUPLICATE_TASKS: bool = False  # offer users tasks to which they already responded
-    DEBUG_SKIP_EMBEDDING_COMPUTATION: bool = False
-    DEBUG_SKIP_TOXICITY_CALCULATION: bool = False
+    DEBUG_SKIP_EMBEDDING_COMPUTATION: bool = True
+    DEBUG_SKIP_TOXICITY_CALCULATION: bool = True
     DEBUG_DATABASE_ECHO: bool = False
     DEBUG_IGNORE_TOS_ACCEPTANCE: bool = (  # ignore whether users accepted the ToS
         True  # TODO: set False after ToS acceptance UI was added to web-frontend

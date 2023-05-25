@@ -130,6 +130,7 @@ class PromptRepository:
         role: str,
         payload: db_payload.MessagePayload,
         lang: str,
+        category: str = None,
         payload_type: str = None,
         depth: int = 0,
         review_count: int = 0,
@@ -158,6 +159,7 @@ class PromptRepository:
             review_count=review_count,
             review_result=review_result,
             deleted=deleted,
+            category=category
         )
         self.db.add(message)
         return message
@@ -200,6 +202,7 @@ class PromptRepository:
         lang: str,
         frontend_message_id: str,
         user_frontend_message_id: str,
+        category: str = None,
         review_count: int = 0,
         review_result: bool = None,
         check_tree_state: bool = True,
@@ -303,6 +306,7 @@ class PromptRepository:
             review_count=review_count,
             review_result=review_result,
             deleted=deleted,
+            category=category
         )
         if not task.collective:
             task.done = True

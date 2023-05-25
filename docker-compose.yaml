@@ -98,7 +98,7 @@ services:
     environment:
       - POSTGRES_HOST=db
       - REDIS_HOST=redis
-      - DEBUG_USE_SEED_DATA=True
+      - DEBUG_USE_SEED_DATA=False
       - DEBUG_ALLOW_SELF_LABELING=True
       - MAX_WORKERS=1
       - DEBUG_SKIP_TOXICITY_CALCULATION=False
