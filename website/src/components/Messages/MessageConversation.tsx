@@ -77,7 +77,7 @@ export function MessageConversation({
     <Stack spacing="4" position="relative">
       {(showCheckboxes && selectedMessages.length > 0) && (
         <Box p={3} shadow='md' borderWidth='1px' borderRadius="md" display="flex" flexDirection="row" alignItems="center" gap="3">
-          <Text fontSize="lg">Export Messages as</Text>
+          <Text fontSize="lg">Export {selectedMessages.length} message{selectedMessages.length > 1 ? 's' : ''}  as</Text>
           <Button colorScheme="green" marginRight="2" onClick={() => { exportMessagesAsJSON(messages, selectedMessages) }}>JSON</Button>
           <Button colorScheme="green" onClick={() => { exportMessagesAsCSV(messages, selectedMessages) }}>CSV</Button>
         </Box>
