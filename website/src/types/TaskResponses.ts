@@ -1,5 +1,9 @@
 export interface CreateTaskReply {
-  text: string;
+  text?: string;
+  message_id?: string;
+  category?: string;
+  assistant_response?: string;
+  [key: string]: string | undefined; // Force at least one of the above.
 }
 
 export interface EvaluateTaskReply {

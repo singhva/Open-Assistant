@@ -1,5 +1,6 @@
 import {
   Badge,
+  Checkbox,
   Flex,
   Menu,
   MenuButton,
@@ -58,11 +59,14 @@ interface MessageTableEntryProps {
   highlight?: boolean;
   showAuthorBadge?: boolean;
   showCreatedDate?: boolean;
+  showCheckbox?: boolean;
+  isChecked?: boolean;
+  onCheck?: (checked: boolean) => void;
 }
 
 // eslint-disable-next-line react/display-name
 export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryProps>(
-  ({ message, enabled, highlight, showAuthorBadge, showCreatedDate }, ref) => {
+  ({ message, enabled, highlight, showAuthorBadge, showCreatedDate, isChecked, onCheck, showCheckbox }, ref) => {
     const [emojiState, setEmojis] = useState<MessageEmojis>({ emojis: {}, user_emojis: [] });
     useEffect(() => {
       const emojis = { ...message.emojis };
@@ -97,6 +101,7 @@ export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryPro
       enabled && router.push(ROUTES.MESSAGE_DETAIL(message.id));
     }, [enabled, message.id, router]);
 
+
     return (
       <BaseMessageEntry
         ref={ref}
@@ -121,6 +126,13 @@ export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryPro
             <Badge variant="subtle" colorScheme="gray" fontSize="xx-small">
               {message.lang}
             </Badge>
+            {showCheckbox && (
+              <Checkbox
+                isChecked={isChecked}
+                onChange={() => onCheck(!isChecked)}
+              ></Checkbox>
+            )}
+
             {Object.entries(emojiState.emojis)
               .filter(([emoji]) => isKnownEmoji(emoji))
               .sort(([emoji]) => -emoji)
@@ -136,6 +148,7 @@ export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryPro
                   />
                 );
               })}
+
             <MessageActions
               react={react}
               userEmoji={emojiState.user_emojis}
@@ -303,8 +316,7 @@ const MessageActions = ({
           <MenuItem
             onClick={() =>
               handleCopy(
-                `${window.location.protocol}//${window.location.host}${
-                  locale === "en" ? "" : `/${locale}`
+                `${window.location.protocol}//${window.location.host}${locale === "en" ? "" : `/${locale}`
                 }/messages/${id}`
               )
             }

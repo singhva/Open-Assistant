@@ -16,7 +16,8 @@ import { getBackendUserCore } from "src/lib/users";
  */
 const handler = withoutRole("banned", async (req, res, token) => {
   // Fetch the new task.
-  const { task_type } = req.query;
+  const { task_type, message_id } = req.query;
+
   const lang = getLanguageFromRequest(req);
 
   const user = await getBackendUserCore(token.sub);

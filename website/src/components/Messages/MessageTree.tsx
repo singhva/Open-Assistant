@@ -1,5 +1,5 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import { Fragment, memo, useRef } from "react";
+import { Fragment, memo, useRef, useState } from "react";
 import { useScrollToElementOnMount } from "src/hooks/ui/useScrollToElementOnMount";
 import { MessageWithChildren } from "src/types/Conversation";
 
@@ -23,6 +23,8 @@ export const MessageTree = memo(({ tree, messageId, scrollToHighlighted }: Messa
   const highlightedElementRef = useRef<HTMLDivElement>(null);
   useScrollToElementOnMount(highlightedElementRef);
 
+  const [selectedMessages, updateSelectedMessages] = useState<string[]>([]);
+
   const renderChildren = (children: MessageWithChildren[], depth = 1) => {
     const hasSibling = children.length > 1;
     return children.map((child, idx) => {
@@ -42,6 +44,15 @@ export const MessageTree = memo(({ tree, messageId, scrollToHighlighted }: Messa
                   highlight={child.id === messageId}
                   message={child}
                   showCreatedDate
+                  showCheckbox={true}
+                  isChecked={selectedMessages.includes(child.id)}
+                  onCheck={(checked) => {
+                    if (checked) {
+                      updateSelectedMessages([...selectedMessages, child.id]);
+                    } else {
+                      updateSelectedMessages(selectedMessages.filter((id) => id !== child.id));
+                    }
+                  }}
                 ></MessageTableEntry>
               </Box>
               {depth < maxDepth && renderChildren(child.children, depth + 1)}

@@ -11,7 +11,7 @@ import { ERROR_CODES } from "src/lib/errors";
 import { getTypeSafei18nKey } from "src/lib/i18n";
 import { OasstError } from "src/lib/oasst_api_client";
 import { BaseTask, TaskCategory, TaskContent, TaskInfo, TaskReplyValidity } from "src/types/Task";
-import { CreateTaskType, LabelTaskType, RankTaskType } from "src/types/Tasks";
+import { CreateAssistantReplyTask, CreateTaskType, LabelTaskType, RankTaskType } from "src/types/Tasks";
 
 interface EditMode {
   mode: "EDIT";
@@ -62,6 +62,8 @@ export interface TaskSurveyProps<TaskType extends BaseTask, ReplyContent> {
   onReplyChanged: (content: ReplyContent) => void;
   onValidityChanged: (validity: TaskReplyValidity) => void;
   onSubmit?: () => void;
+  onCategoryChanged?: (category: string) => void;
+  onResponseChanged?: (response: string) => void;
 }
 
 export const Task = () => {
@@ -69,6 +71,7 @@ export const Task = () => {
   const rootEl = useRef<HTMLDivElement>(null);
   const replyContent = useRef<TaskContent>(null);
   const { rejectTask, completeTask, isLoading, task, taskInfo, isRejecting, isSubmitting } = useTaskContext();
+
   const [taskStatus, taskEvent] = useReducer(
     (
       status: TaskStatus,
@@ -123,9 +126,48 @@ export const Task = () => {
     rootEl.current && scrollToTop(rootEl.current);
   }, [task.id]);
 
+  useEffect(() => {
+    if (task.type === 'assistant_reply') {
+      const createTask: CreateAssistantReplyTask = task;
+      const messages = createTask.conversation.messages;
+      const lastMessage = messages[messages.length - 1];
+      if (replyContent) {
+        replyContent.current = { ...replyContent.current, message_id: lastMessage.id };
+      } else {
+        replyContent.current = { message_id: lastMessage.id };
+      }
+    }
+  }, [task.id, replyContent])
+
   const onReplyChanged = useCallback(
     (content: TaskContent) => {
-      replyContent.current = content;
+      if (replyContent.current === null) {
+        replyContent.current = content;
+      } else {
+        replyContent.current = { ...replyContent.current, ...content };
+      }
+    },
+    [replyContent]
+  );
+
+  const onResponseChanged = useCallback(
+    (content: TaskContent) => {
+      if (replyContent.current === null) {
+        replyContent.current = content;
+      } else {
+        replyContent.current = { ...replyContent.current, ...content };
+      }
+    },
+    [replyContent]
+  );
+
+  const onCategoryChanged = useCallback(
+    (content: TaskContent) => {
+      if (replyContent.current === null) {
+        replyContent.current = content;
+      } else {
+        replyContent.current = { ...replyContent.current, ...content };
+      }
     },
     [replyContent]
   );

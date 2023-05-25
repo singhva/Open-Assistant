@@ -56,24 +56,25 @@ export const CreateTask = ({
     }
   };
 
-  const responseTextHandler = (text: string) => {
-    onReplyChanged({ text });
-    const isTextBlank = !text || /^\s*$/.test(text);
+  const responseTextHandler = (assistant_response: string) => {
+    onReplyChanged({ assistant_response });
+    const isTextBlank = !assistant_response || /^\s*$/.test(assistant_response);
     if (!isTextBlank) {
       onValidityChanged("VALID");
-      setResponseText(text);
+      setResponseText(assistant_response);
     } else {
       onValidityChanged("INVALID");
       setResponseText("");
     }
   };
 
-  const categoryChanged = (option) => {
-    const value = option.target.value
-    onValidityChanged(!!value ? "VALID" : "INVALID")
-    setCategory(value);
+  const categoryChanged = (event: Event) => {
+    const target: HTMLInputElement = event.target as HTMLInputElement;
+    const category = target.value
+    onValidityChanged(!!category ? "VALID" : "INVALID")
+    onReplyChanged({ category })
+    setCategory(category);
   }
-
 
   const previewContent = useMemo(
     () => {
