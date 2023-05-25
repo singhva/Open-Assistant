@@ -42,7 +42,7 @@ const MessagesDashboard = () => {
             className="p-6 shadow-sm"
           >
             {messages ? (
-              <MessageConversation enableLink messages={messages} showCreatedDate />
+              <MessageConversation enableLink messages={messages} showCreatedDate showCheckboxes />
             ) : (
               <CircularProgress isIndeterminate />
             )}

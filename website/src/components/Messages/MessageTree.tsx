@@ -16,14 +16,15 @@ interface MessageTreeProps {
   tree: MessageWithChildren;
   messageId?: string;
   scrollToHighlighted?: boolean;
+  showCheckboxes?: boolean;
 }
 
 // eslint-disable-next-line react/display-name
-export const MessageTree = memo(({ tree, messageId, scrollToHighlighted }: MessageTreeProps) => {
+export const MessageTree = memo(({ tree, messageId, scrollToHighlighted, showCheckboxes }: MessageTreeProps) => {
   const highlightedElementRef = useRef<HTMLDivElement>(null);
   useScrollToElementOnMount(highlightedElementRef);
 
-  const [selectedMessages, updateSelectedMessages] = useState<string[]>([]);
+  // const [selectedMessages, updateSelectedMessages] = useState<string[]>([]);
 
   const renderChildren = (children: MessageWithChildren[], depth = 1) => {
     const hasSibling = children.length > 1;
@@ -44,15 +45,15 @@ export const MessageTree = memo(({ tree, messageId, scrollToHighlighted }: Messa
                   highlight={child.id === messageId}
                   message={child}
                   showCreatedDate
-                  showCheckbox={true}
-                  isChecked={selectedMessages.includes(child.id)}
-                  onCheck={(checked) => {
-                    if (checked) {
-                      updateSelectedMessages([...selectedMessages, child.id]);
-                    } else {
-                      updateSelectedMessages(selectedMessages.filter((id) => id !== child.id));
-                    }
-                  }}
+                // showCheckbox={showCheckboxes}
+                // isChecked={selectedMessages.includes(child.id)}
+                // onCheck={(checked) => {
+                //   if (checked) {
+                //     updateSelectedMessages([...selectedMessages, child.id]);
+                //   } else {
+                //     updateSelectedMessages(selectedMessages.filter((id) => id !== child.id));
+                //   }
+                // }}
                 ></MessageTableEntry>
               </Box>
               {depth < maxDepth && renderChildren(child.children, depth + 1)}
@@ -99,6 +100,15 @@ export const MessageTree = memo(({ tree, messageId, scrollToHighlighted }: Messa
           message={tree}
           highlight={tree.id === messageId}
           showCreatedDate
+          showCheckbox={showCheckboxes}
+          isChecked={selectedMessages.includes(messageId)}
+          onCheck={(checked) => {
+            if (checked) {
+              updateSelectedMessages([...selectedMessages, messageId]);
+            } else {
+              updateSelectedMessages(selectedMessages.filter((id) => id !== messageId));
+            }
+          }}
         />
       </Box>
       {renderChildren(tree.children)}

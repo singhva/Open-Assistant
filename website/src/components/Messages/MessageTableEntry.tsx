@@ -130,6 +130,8 @@ export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryPro
               <Checkbox
                 isChecked={isChecked}
                 onChange={() => onCheck(!isChecked)}
+                size="md"
+                style={{ borderWidth: 1, borderColor: "#3182CE" }}
               ></Checkbox>
             )}
 
