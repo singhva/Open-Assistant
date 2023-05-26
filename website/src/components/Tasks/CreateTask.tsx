@@ -23,6 +23,7 @@ import { TaskType } from "src/types/Task";
 import { CreateTaskReply } from "src/types/TaskResponses";
 import { CreateTaskType } from "src/types/Tasks";
 import { Select } from "@chakra-ui/react";
+import { ChangeEvent } from "react";
 
 const RenderedMarkdown = lazy(() => import("../Messages/RenderedMarkdown"));
 
@@ -34,6 +35,7 @@ export const CreateTask = ({
   onReplyChanged,
   onValidityChanged,
   onSubmit,
+  showExtraInputs,
 }: TaskSurveyProps<CreateTaskType, CreateTaskReply>) => {
   const { t, i18n } = useTranslation(["tasks", "common"]);
   const cardColor = useColorModeValue("gray.50", "gray.800");
@@ -43,6 +45,8 @@ export const CreateTask = ({
   const [responseText, setResponseText] = useState("");
   const [category, setCategory] = useState("");
   const [isDesktop] = useMediaQuery("(min-width: 800px)");
+
+  // TODO: Modify validation.  Is potentially dependent on extra inputs being completed.
 
   const textChangeHandler = (text: string) => {
     onReplyChanged({ text });
@@ -68,9 +72,8 @@ export const CreateTask = ({
     }
   };
 
-  const categoryChanged = (event: Event) => {
-    const target: HTMLInputElement = event.target as HTMLInputElement;
-    const category = target.value
+  const categoryChanged = (event: ChangeEvent<HTMLSelectElement>) => {
+    const category = event.target.value
     onValidityChanged(!!category ? "VALID" : "INVALID")
     onReplyChanged({ category })
     setCategory(category);
@@ -79,7 +82,14 @@ export const CreateTask = ({
   const previewContent = useMemo(
     () => {
 
-      const text = "**Prompt**: " + inputText + "\n\n**Response**: " + responseText + "\n\n**Category**: " + category
+      // Preview content differs depending on if we have extra inputs.
+      let text: string
+
+      if (showExtraInputs) {
+        text = "**Prompt**: " + inputText + "\n\n**Response**: " + responseText + "\n\n**Category**: " + category
+      } else {
+        text = "**Prompt**: " + inputText;
+      }
 
       return (
         <Suspense fallback={text}>
@@ -87,7 +97,7 @@ export const CreateTask = ({
         </Suspense>
       )
     },
-    [inputText, responseText, category]
+    [inputText, responseText, category, showExtraInputs]
   );
 
   useEffect(() => {
@@ -161,25 +171,29 @@ export const CreateTask = ({
                       }}
                     />
 
+                    {showExtraInputs && (
+                      <>
+                        <TrackedTextarea
+                          text={responseText}
+                          onTextChange={responseTextHandler}
+                          thresholds={{ low: 20, medium: 40, goal: 50 }}
+                          textareaProps={{
+                            placeholder: t(getTypeSafei18nKey(`tasks:${taskType.id}.supplied_response_placeholder`)),
+                            isDisabled,
+                            minRows: 5,
+                          }}
+                        />
 
-                    <TrackedTextarea
-                      text={responseText}
-                      onTextChange={responseTextHandler}
-                      thresholds={{ low: 20, medium: 40, goal: 50 }}
-                      textareaProps={{
-                        placeholder: t(getTypeSafei18nKey(`tasks:${taskType.id}.supplied_response_placeholder`)),
-                        isDisabled,
-                        minRows: 5,
-                      }}
-                    />
+                        <Select onChange={categoryChanged} maxW="fit-content" pt="4">
+                          <option>Select a category</option>
+                          <option>Hardcoded Option A</option>
+                          <option>Hardcoded Option B</option>
+                          <option>Hardcoded Option C</option>
+                          <option>Hardcoded Option D</option>
+                        </Select>
+                      </>
+                    )}
 
-                    <Select onChange={categoryChanged} maxW="fit-content" pt="4">
-                      <option>Select a category</option>
-                      <option>Hardcoded Option A</option>
-                      <option>Hardcoded Option B</option>
-                      <option>Hardcoded Option C</option>
-                      <option>Hardcoded Option D</option>
-                    </Select>
 
 
                   </TabPanel>

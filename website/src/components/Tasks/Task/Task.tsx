@@ -64,6 +64,7 @@ export interface TaskSurveyProps<TaskType extends BaseTask, ReplyContent> {
   onSubmit?: () => void;
   onCategoryChanged?: (category: string) => void;
   onResponseChanged?: (response: string) => void;
+  showExtraInputs?: boolean;
 }
 
 export const Task = () => {
@@ -210,6 +211,9 @@ export const Task = () => {
   }, [taskStatus.mode, submitResponse]);
 
   const taskTypeComponent = useMemo(() => {
+
+
+
     switch (taskInfo.category) {
       case TaskCategory.Create:
         return (
@@ -221,6 +225,7 @@ export const Task = () => {
             onReplyChanged={onReplyChanged}
             onValidityChanged={updateValidity}
             onSubmit={handleKeyboardSubmit}
+            showExtraInputs={taskInfo.type === 'initial_prompt'}
           />
         );
       case TaskCategory.Evaluate:
