@@ -1,4 +1,4 @@
-import { Box, CircularProgress, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
+import { Box, Button, CircularProgress, SimpleGrid, Text, useColorModeValue } from "@chakra-ui/react";
 import Head from "next/head";
 import { useTranslation } from "next-i18next";
 import { DashboardLayout } from "src/components/Layout";
@@ -10,6 +10,7 @@ import UserMessageConversation from "src/components/UserMessageConversation";
 import { useCurrentLocale } from "src/hooks/locale/useCurrentLocale";
 import { getLocaleDisplayName } from "src/lib/languages";
 import { API_ROUTES } from "src/lib/routes";
+import { useState } from "react";
 
 const MessagesDashboard = () => {
   const { t } = useTranslation(["message"]);
@@ -17,7 +18,8 @@ const MessagesDashboard = () => {
   const boxAccentColor = useColorModeValue("gray.200", "gray.900");
 
   const lang = useCurrentLocale();
-  const { data: messages } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang }), get, { revalidateOnMount: true });
+  const [page, setPage] = useState<number>(0)
+  const { data: messages } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
 
   const currentLanguage = useCurrentLocale();
 
@@ -46,6 +48,10 @@ const MessagesDashboard = () => {
             ) : (
               <CircularProgress isIndeterminate />
             )}
+            <Box pt="6" display="flex" alignItems="center" justifyContent={"space-between"}>
+              <Button colorScheme="blue" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
+              <Button colorScheme="blue" onClick={() => setPage(page + 1)}>Next</Button>
+            </Box>
           </Box>
         </Box>
         <Box>

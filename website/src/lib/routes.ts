@@ -37,15 +37,21 @@ export type QueryWithLang<T extends RouteQuery | undefined = undefined> = T exte
 
 const withLang =
   <T extends RouteQuery | undefined = undefined>(path: string, q?: T) =>
-  (query: QueryWithLang<T>) => {
-    return createRoute(path, { ...q, ...query });
-  };
+    (query: QueryWithLang<T>) => {
+      return createRoute(path, { ...q, ...query });
+    };
+
+const withLangAndPage =
+  <T extends RouteQuery | undefined = undefined>(path: string, q?: T) =>
+    (query: QueryWithLangAndPage<T>) => {
+      return createRoute(path, { ...q, ...query });
+    };
 
 export const API_ROUTES = {
   NEW_TASK: (type: TaskType, query: QueryWithLang) => createRoute(`/api/new_task/${type}`, query),
   UPDATE_TASK: "/api/update_task",
   AVAILABLE_TASK: withLang("/api/available_tasks"),
-  RECENT_MESSAGES: withLang("/api/messages"),
+  RECENT_MESSAGES: withLangAndPage("/api/messages"),
   ADMIN_DELETE_MESSAGE: (messageId: string) => createRoute(`/api/admin/delete_message/${messageId}`),
   ADMIN_UNDELETE_MESSAGE: (messageId: string) => createRoute(`/api/admin/undelete_message/${messageId}`),
   ADMIN_MESSAGE_LIST: (query: CursorPaginationState & { user_id?: string; include_user?: boolean }) =>
