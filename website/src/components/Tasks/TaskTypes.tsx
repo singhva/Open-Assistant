@@ -24,7 +24,7 @@ export const TaskInfos: TaskInfo[] = [
     pathname: "/create/initial_prompt",
     help_link: "https://projects.laion.ai/Open-Assistant/docs/tasks/reply_as_user",
     type: TaskType.initial_prompt,
-    update_type: TaskUpdateType.TextReplyToMessage,
+    update_type: TaskUpdateType.InitialPromptWithResponse,
   },
   {
     id: "reply_as_user",

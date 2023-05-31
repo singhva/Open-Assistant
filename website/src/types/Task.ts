@@ -36,6 +36,7 @@ export enum TaskUpdateType {
   Random = "random",
   TextLabels = "text_labels",
   TextReplyToMessage = "text_reply_to_message",
+  InitialPromptWithResponse = "initial_prompt_with_response"
 }
 
 // we need to reconsider how to handle task content types

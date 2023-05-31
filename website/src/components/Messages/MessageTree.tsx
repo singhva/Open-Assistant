@@ -24,7 +24,7 @@ export const MessageTree = memo(({ tree, messageId, scrollToHighlighted, showChe
   const highlightedElementRef = useRef<HTMLDivElement>(null);
   useScrollToElementOnMount(highlightedElementRef);
 
-  // const [selectedMessages, updateSelectedMessages] = useState<string[]>([]);
+  const [selectedMessages, updateSelectedMessages] = useState<string[]>([]);
 
   const renderChildren = (children: MessageWithChildren[], depth = 1) => {
     const hasSibling = children.length > 1;

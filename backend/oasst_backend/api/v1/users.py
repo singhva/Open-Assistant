@@ -236,7 +236,7 @@ def query_user_messages(
     Query user messages.
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
-    messages = pr.query_messages_ordered_by_created_date(
+    count, messages = pr.query_messages_ordered_by_created_date(
         user_id=user_id,
         api_client_id=api_client_id,
         desc=desc,
@@ -288,7 +288,7 @@ def mark_user_messages_deleted(
     db: Session = Depends(deps.get_db),
 ):
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
-    messages = pr.query_messages_ordered_by_created_date(user_id=user_id, limit=None)
+    count, messages = pr.query_messages_ordered_by_created_date(user_id=user_id, limit=None)
     pr.mark_messages_deleted(messages)
 
 

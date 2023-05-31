@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Optional
+from typing import Optional, Tuple
 from uuid import UUID, uuid4
 
 import oasst_backend.models.db_payload as db_payload
@@ -493,6 +493,7 @@ class PromptRepository:
 
             task_payload: db_payload.TaskPayload = task.payload.payload
             if isinstance(task_payload, db_payload.LabelInitialPromptPayload):
+                logger.debug(f"Message ID is: {message_id} and task message ID is: {task_payload.message_id}")
                 if message_id and task_payload.message_id != message_id:
                     raise OasstError("Task message id mismatch", OasstErrorCode.TEXT_LABELS_WRONG_MESSAGE_ID)
                 message_id = task_payload.message_id
@@ -958,7 +959,7 @@ class PromptRepository:
         limit: Optional[int] = 100,
         lang: Optional[str] = None,
         include_user: Optional[bool] = None,
-    ) -> list[Message]:
+    ) -> Tuple[int, list[Message]]:
         if not self.api_client.trusted:
             if not api_client_id:
                 # Let unprivileged api clients query their own messages without api_client_id being set
@@ -1028,10 +1029,11 @@ class PromptRepository:
         else:
             qry = qry.order_by(Message.created_date.asc(), Message.id.asc())
 
+        count = qry.count()
         if limit is not None:
             qry = qry.limit(limit)
 
-        return self._add_user_emojis_all(qry, include_user=include_user)
+        return count, self._add_user_emojis_all(qry, include_user=include_user)
 
     def update_children_counts(self, message_tree_id: UUID):
         sql_update_children_count = """

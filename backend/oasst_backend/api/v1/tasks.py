@@ -77,7 +77,9 @@ def request_task(
             if not task:
                 raise OasstError
         else:
+            logger.debug(f"Requested task is: {request.type}")
             task, message_tree_id, parent_message_id = tm.next_task(desired_task_type=request.type, lang=request.lang)
+            logger.debug(f"Found task: {task}")
         pr.task_repository.store_task(task, message_tree_id, parent_message_id, request.collective)
 
     except OasstError:

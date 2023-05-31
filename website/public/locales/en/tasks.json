@@ -16,7 +16,7 @@
     "label": "Create Initial Prompts",
     "desc": "Write initial prompts to help Open Assistant to try replying to diverse messages. (enter into lottery)",
     "overview": "Create an initial message to send to the assistant",
-    "instruction": "Provide the initial prompts",
+    "instruction": "Provide the initial prompt and an optional response",
     "response_placeholder": "Write your prompt here...",
     "supplied_response_placeholder": "Write your response here...",
     "shotcut_tip": "Tip: You can use a keyboard shortcut to Review and Submit responses:"

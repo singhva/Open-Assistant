@@ -19,7 +19,7 @@ from starlette.status import HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT
 router = APIRouter()
 
 
-@router.get("/", response_model=list[protocol.Message])
+@router.get("/", response_model=dict)
 def query_messages(
     *,
     auth_method: Optional[str] = None,
@@ -40,7 +40,7 @@ def query_messages(
     Query messages.
     """
     pr = PromptRepository(db, api_client, auth_method=frontend_user.auth_method, username=frontend_user.username)
-    messages = pr.query_messages_ordered_by_created_date(
+    count, messages = pr.query_messages_ordered_by_created_date(
         auth_method=auth_method,
         username=username,
         api_client_id=api_client_id,
@@ -53,7 +53,7 @@ def query_messages(
         lang=lang,
     )
 
-    return utils.prepare_message_list(messages)
+    return {"totalMessages": count, "messages": utils.prepare_message_list(messages)}
 
 
 @router.get("/cursor", response_model=protocol.MessagePage)
@@ -102,7 +102,7 @@ def get_messages_cursor(
     qry_max_count = max_count + 1 if before is None or after is None else max_count
 
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
-    items = pr.query_messages_ordered_by_created_date(
+    count, items = pr.query_messages_ordered_by_created_date(
         user_id=user_id,
         auth_method=auth_method,
         username=username,
