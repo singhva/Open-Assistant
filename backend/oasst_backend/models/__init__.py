@@ -3,6 +3,7 @@ from .cached_stats import CachedStats
 from .flagged_message import FlaggedMessage
 from .journal import Journal, JournalIntegration
 from .message import Message
+from .category import Category
 from .message_embedding import MessageEmbedding
 from .message_emoji import MessageEmoji
 from .message_reaction import MessageReaction
@@ -32,4 +33,5 @@ __all__ = [
     "TrollStats",
     "FlaggedMessage",
     "CachedStats",
+    "Category"
 ]
