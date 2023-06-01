@@ -35,6 +35,10 @@ export type QueryWithLang<T extends RouteQuery | undefined = undefined> = T exte
   ? { lang: string }
   : T & { lang: string };
 
+export type QueryWithLangAndPage<T extends RouteQuery | undefined = undefined> = T extends undefined
+  ? { lang: string; page: number }
+  : T & { lang: string; page: number };
+
 const withLang =
   <T extends RouteQuery | undefined = undefined>(path: string, q?: T) =>
     (query: QueryWithLang<T>) => {
