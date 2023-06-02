@@ -11,6 +11,7 @@ import { useCurrentLocale } from "src/hooks/locale/useCurrentLocale";
 import { getLocaleDisplayName } from "src/lib/languages";
 import { API_ROUTES } from "src/lib/routes";
 import { useState } from "react";
+import { Message } from "src/types/Conversation";
 
 const MessagesDashboard = () => {
   const { t } = useTranslation(["message"]);
@@ -19,7 +20,13 @@ const MessagesDashboard = () => {
 
   const lang = useCurrentLocale();
   const [page, setPage] = useState<number>(0)
-  const { data: { messages, totalMessages } } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
+  const { data } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
+
+  let messages: Message[] | undefined = data?.messages
+  let totalMessages: number | undefined = data?.totalMessages
+
+  const messagesPerPage: number = 10
+  const totalPages: number = Math.ceil(totalMessages / messagesPerPage)
 
   const currentLanguage = useCurrentLocale();
 
@@ -49,8 +56,9 @@ const MessagesDashboard = () => {
               <CircularProgress isIndeterminate />
             )}
             <Box pt="6" display="flex" alignItems="center" justifyContent={"space-between"}>
-              <Button colorScheme="blue" disabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
-              <Button colorScheme="blue" onClick={() => setPage(page + 1)}>Next</Button>
+              <Button colorScheme="blue" isDisabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
+              <Text>Page {page + 1} of {totalPages}</Text>
+              <Button colorScheme="blue" isDisabled={page + 1 === totalPages} onClick={() => setPage(page + 1)}>Next</Button>
             </Box>
           </Box>
         </Box>
