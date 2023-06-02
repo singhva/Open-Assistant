@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   Kbd,
   Stack,
   Tab,
@@ -24,6 +25,8 @@ import { CreateTaskReply } from "src/types/TaskResponses";
 import { CreateTaskType } from "src/types/Tasks";
 import { Select } from "@chakra-ui/react";
 import { ChangeEvent } from "react";
+import useSWRImmutable from "swr/immutable";
+import { get } from "src/lib/api";
 
 const RenderedMarkdown = lazy(() => import("../Messages/RenderedMarkdown"));
 
@@ -45,6 +48,14 @@ export const CreateTask = ({
   const [responseText, setResponseText] = useState("");
   const [category, setCategory] = useState("");
   const [isDesktop] = useMediaQuery("(min-width: 800px)");
+
+  const { data: categories, isLoading } = useSWRImmutable(
+    '/api/categories?lang=en', // If we want to show own deleted messages, add:  &include_deleted=true
+    get,
+    {
+      revalidateOnMount: true,
+    }
+  );
 
   // TODO: Modify validation.  Is potentially dependent on extra inputs being completed.
 
@@ -186,10 +197,7 @@ export const CreateTask = ({
 
                         <Select onChange={categoryChanged} maxW="fit-content" pt="4">
                           <option>Select a category</option>
-                          <option>Hardcoded Option A</option>
-                          <option>Hardcoded Option B</option>
-                          <option>Hardcoded Option C</option>
-                          <option>Hardcoded Option D</option>
+                          {categories?.length && categories.map((category: string) => (<option>{category}</option>))}
                         </Select>
                       </>
                     )}

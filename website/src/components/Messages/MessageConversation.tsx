@@ -1,9 +1,9 @@
-import { Box, Button, Stack, Text, position } from "@chakra-ui/react";
+import { Box, Button, Stack, Text } from "@chakra-ui/react";
 import { useTranslation } from "next-i18next";
 import { MessageTableEntry } from "src/components/Messages/MessageTableEntry";
 import { Message } from "src/types/Conversation";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 
 import { saveAs } from 'file-saver'
 

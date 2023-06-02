@@ -403,7 +403,7 @@ export class OasstApiClient {
   }
 
   fetch_categories(lang: string) {
-    return this.get(`/api/v1/categories/`, { lang })
+    return this.get(`/api/v1/messages/categories/`, { lang })
   }
 
   async set_tos_acceptance(user: BackendUserCore) {
