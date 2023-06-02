@@ -402,6 +402,10 @@ export class OasstApiClient {
     return this.get(`/api/v1/messages/${messageId}/conversation`);
   }
 
+  fetch_categories(lang: string) {
+    return this.get(`/api/v1/categories/`, { lang })
+  }
+
   async set_tos_acceptance(user: BackendUserCore) {
     // NOTE: we do a post here to force create the user if it does not exist
     const backendUser = await this.upsert_frontend_user(user);
