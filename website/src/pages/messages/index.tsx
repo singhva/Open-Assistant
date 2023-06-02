@@ -19,7 +19,7 @@ const MessagesDashboard = () => {
 
   const lang = useCurrentLocale();
   const [page, setPage] = useState<number>(0)
-  const { data: messages } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
+  const { data: { messages, totalMessages } } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
 
   const currentLanguage = useCurrentLocale();
 
