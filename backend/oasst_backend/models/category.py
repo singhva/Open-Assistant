@@ -15,7 +15,7 @@ class Category(SQLModel, table=True):
             pg.UUID(as_uuid=True), primary_key=True, default=uuid4, server_default=sa.text("gen_random_uuid()")
         ),
     )
-    name: str = Field(nullable=False, index=True)
+    name: str = Field(nullable=False, index=True, unique=True)
     description: str = Field(nullable=False)
     created_date: Optional[datetime] = Field(
         sa_column=sa.Column(

@@ -1285,8 +1285,8 @@ WHERE message.id = cc.id;
 
         return message
 
-    def fetch_categories(self) -> Dict[str, str]:
+    def fetch_categories(self) -> List[str]:
         categories: List[Category] = self.db.query(Category).all()
-        category_dict = {category.name: category.description for category in categories}
+        category_names = [category.name for category in categories]
 
-        return category_dict
+        return category_names

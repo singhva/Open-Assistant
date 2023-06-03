@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional, Dict
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
@@ -353,13 +353,3 @@ def post_message_emoji(
         return pr.handle_message_emoji(message_id, request.op, request.emoji)
 
     return utils.prepare_message(emoji_tx())
-
-@router.get("/categories", response_model=dict)
-def list_categories(
-        api_client_id: Optional[str] = None,
-        api_client: ApiClient = Depends(deps.get_api_client),
-        frontend_user: deps.FrontendUserId = Depends(deps.get_frontend_user_id),
-        db: Session = Depends(deps.get_db)
-    ) -> Dict[str, str]:
-    pr = PromptRepository(db, api_client, auth_method=frontend_user.auth_method, username=frontend_user.username)
-    return pr.fetch_categories()

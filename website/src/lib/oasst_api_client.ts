@@ -365,13 +365,14 @@ export class OasstApiClient {
     });
   }
 
-  fetch_my_messages(user: BackendUserCore) {
-    const params = new URLSearchParams({
-      username: user.id,
-      auth_method: user.auth_method,
-    });
-    return this.get<Message[]>(`/api/v1/messages/?${params}`);
-  }
+  // fetch_my_messages(user: BackendUserCore) {
+  //   const params = new URLSearchParams({
+  //     username: user.id,
+  //     auth_method: user.auth_method,
+  //   });
+  //   return this.get<Message[]>(`/api/v1/messages/?${params}`);
+  // }
+  private _page_num: number;
 
   fetch_my_messages_cursor(
     user: BackendUserCore,
@@ -390,8 +391,8 @@ export class OasstApiClient {
     });
   }
 
-  fetch_recent_messages(lang: string, page: number = 0) {
-    return this.get<Message[]>(`/api/v1/messages/`, { lang, page });
+  fetch_recent_messages(lang: string, page = 0) {
+    return this.get(`/api/v1/messages/`, { lang, page });
   }
 
   fetch_message_children(messageId: string) {
@@ -403,7 +404,7 @@ export class OasstApiClient {
   }
 
   fetch_categories(lang: string) {
-    return this.get(`/api/v1/messages/categories/`, { lang })
+    return this.get(`/api/v1/categories/`, { lang })
   }
 
   async set_tos_acceptance(user: BackendUserCore) {

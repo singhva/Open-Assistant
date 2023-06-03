@@ -56,6 +56,7 @@ export const API_ROUTES = {
   UPDATE_TASK: "/api/update_task",
   AVAILABLE_TASK: withLang("/api/available_tasks"),
   RECENT_MESSAGES: withLangAndPage("/api/messages"),
+  GET_CATEGORIES: withLang("/api/categories"),
   ADMIN_DELETE_MESSAGE: (messageId: string) => createRoute(`/api/admin/delete_message/${messageId}`),
   ADMIN_UNDELETE_MESSAGE: (messageId: string) => createRoute(`/api/admin/undelete_message/${messageId}`),
   ADMIN_MESSAGE_LIST: (query: CursorPaginationState & { user_id?: string; include_user?: boolean }) =>
