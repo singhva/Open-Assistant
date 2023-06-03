@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 from datetime import datetime, timedelta
 from http import HTTPStatus
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List, Dict
 from uuid import UUID, uuid4
 
 import oasst_backend.models.db_payload as db_payload
@@ -24,7 +24,7 @@ from oasst_backend.models import (
     Task,
     TextLabels,
     User,
-    message_tree_state,
+    message_tree_state, Category,
 )
 from oasst_backend.models.payload_column_type import PayloadContainer
 from oasst_backend.task_repository import TaskRepository, validate_frontend_message_id
@@ -957,6 +957,7 @@ class PromptRepository:
         review_result: Optional[bool] = None,
         desc: bool = False,
         limit: Optional[int] = 100,
+        page: Optional[int] = 1,
         lang: Optional[str] = None,
         include_user: Optional[bool] = None,
     ) -> Tuple[int, list[Message]]:
@@ -1283,3 +1284,9 @@ WHERE message.id = cc.id;
         self.db.refresh(message)
 
         return message
+
+    def fetch_categories(self) -> Dict[str, str]:
+        categories: List[Category] = self.db.query(Category).all()
+        category_dict = {category.name: category.description for category in categories}
+
+        return category_dict
