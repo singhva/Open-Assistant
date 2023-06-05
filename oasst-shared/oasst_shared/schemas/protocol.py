@@ -78,6 +78,7 @@ class ConversationMessage(BaseModel):
     frontend_message_id: Optional[str]
     text: str
     lang: Optional[str]  # BCP 47
+    category: Optional[str]
     is_assistant: bool
     emojis: Optional[dict[str, int]]
     user_emojis: Optional[list[str]]

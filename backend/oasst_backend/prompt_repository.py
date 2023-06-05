@@ -1032,7 +1032,10 @@ class PromptRepository:
 
         count = qry.count()
         if limit is not None:
-            qry = qry.limit(limit)
+            num_pages = count // limit + (count % limit)
+            if page < num_pages:
+                qry = qry.offset((page - 1) * limit).limit(limit)
+            # qry = qry.limit(limit)
 
         return count, self._add_user_emojis_all(qry, include_user=include_user)
 

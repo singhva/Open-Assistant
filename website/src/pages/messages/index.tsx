@@ -19,7 +19,7 @@ const MessagesDashboard = () => {
   const boxAccentColor = useColorModeValue("gray.200", "gray.900");
 
   const lang = useCurrentLocale();
-  const [page, setPage] = useState<number>(0)
+  const [page, setPage] = useState<number>(1)
   const { data } = useSWRImmutable(API_ROUTES.RECENT_MESSAGES({ lang, page }), get, { revalidateOnMount: true });
 
   let messages: Message[] | undefined = data?.messages
@@ -56,9 +56,9 @@ const MessagesDashboard = () => {
               <CircularProgress isIndeterminate />
             )}
             <Box pt="6" display="flex" alignItems="center" justifyContent={"space-between"}>
-              <Button colorScheme="blue" isDisabled={page === 0} onClick={() => setPage(page - 1)}>Previous</Button>
-              <Text>Page {page + 1} of {totalPages}</Text>
-              <Button colorScheme="blue" isDisabled={page + 1 === totalPages} onClick={() => setPage(page + 1)}>Next</Button>
+              <Button colorScheme="blue" isDisabled={page === 1} onClick={() => setPage(page - 1)}>Previous</Button>
+              <Text>Page {page} of {totalPages}</Text>
+              <Button colorScheme="blue" isDisabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</Button>
             </Box>
           </Box>
         </Box>

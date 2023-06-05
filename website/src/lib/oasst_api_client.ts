@@ -391,8 +391,8 @@ export class OasstApiClient {
     });
   }
 
-  fetch_recent_messages(lang: string, page = 0) {
-    return this.get(`/api/v1/messages/`, { lang, page });
+  fetch_recent_messages(lang: string, page = 0, only_roots = true) {
+    return this.get(`/api/v1/messages/`, { lang: lang, page: page, only_roots: only_roots });
   }
 
   fetch_message_children(messageId: string) {

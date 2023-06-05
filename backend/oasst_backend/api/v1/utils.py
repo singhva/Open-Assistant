@@ -13,6 +13,7 @@ def prepare_message(m: Message) -> protocol.Message:
         user_id=m.user_id,
         text=m.text,
         lang=m.lang,
+        category=m.category,
         is_assistant=(m.role == "assistant"),
         created_date=m.created_date,
         emojis=m.emojis or {},
@@ -46,6 +47,7 @@ def prepare_conversation_message(message: Message) -> protocol.ConversationMessa
         user_emojis=message.user_emojis or [],
         user_is_author=message.user_is_author,
         synthetic=message.synthetic,
+        category=message.category
     )
 
 

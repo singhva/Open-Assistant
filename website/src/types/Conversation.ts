@@ -31,6 +31,7 @@ export interface Message extends MessageEmojis {
   review_count: number | null;
   review_result: boolean; // false is spam
   user: BackendUser | null;
+  category: string;
 }
 
 export interface Conversation {
