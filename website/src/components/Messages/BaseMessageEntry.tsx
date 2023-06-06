@@ -1,4 +1,4 @@
-import { Avatar, AvatarProps, Box, BoxProps, Flex, useColorModeValue } from "@chakra-ui/react";
+import {Avatar, AvatarProps, Badge, Box, BoxProps, Flex, useColorModeValue} from "@chakra-ui/react";
 import { forwardRef, lazy, Suspense } from "react";
 import { colors } from "src/styles/Theme/colors";
 import { StrictOmit } from "ts-essentials";
@@ -7,6 +7,7 @@ const RenderedMarkdown = lazy(() => import("./RenderedMarkdown"));
 
 export type BaseMessageEntryProps = StrictOmit<BoxProps, "bg" | "backgroundColor"> & {
   content: string;
+  category?: string;
   avatarProps: Pick<AvatarProps, "name" | "src">;
   bg?: string;
   highlight?: boolean;
@@ -16,7 +17,7 @@ export type BaseMessageEntryProps = StrictOmit<BoxProps, "bg" | "backgroundColor
 };
 
 export const BaseMessageEntry = forwardRef<HTMLDivElement, BaseMessageEntryProps>(function BaseMessageEntry(
-  { content, avatarProps, children, highlight, usedPlugin, isAssistant, containerProps, ...props },
+  { content, category, avatarProps, children, highlight, usedPlugin, isAssistant, containerProps, ...props },
   ref
 ) {
   const bg = useColorModeValue("#DFE8F1", "#42536B");
@@ -64,6 +65,9 @@ export const BaseMessageEntry = forwardRef<HTMLDivElement, BaseMessageEntryProps
         <Suspense fallback={content}>
           {isAssistant ? <PluginUsageDetails usedPlugin={usedPlugin} /> : null}
           <RenderedMarkdown markdown={content} disallowedElements={[]}></RenderedMarkdown>
+          <Badge variant="subtle" colorScheme="gray" fontSize="xx-small">
+              {category}
+            </Badge>
         </Suspense>
         {children}
       </Box>

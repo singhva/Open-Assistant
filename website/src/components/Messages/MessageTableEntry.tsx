@@ -106,6 +106,7 @@ export const MessageTableEntry = forwardRef<HTMLDivElement, MessageTableEntryPro
       <BaseMessageEntry
         ref={ref}
         content={message.text}
+        category={message.category}
         avatarProps={{
           name: `${boolean(message.is_assistant) ? "Assistant" : "User"}`,
           src: `${boolean(message.is_assistant) ? "/images/logos/logo.png" : "/images/temp-avatars/av1.jpg"}`,
