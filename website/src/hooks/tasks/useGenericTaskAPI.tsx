@@ -75,13 +75,7 @@ export const useGenericTaskAPI = <TaskType extends BaseTask, ResponseContent = A
       if (response.taskAvailability !== "AVAILABLE") {
         throw new Error("Cannot complete task that is not yet ready");
       }
-
-      // content minus message_id, which causes the API to 500.
-      const contentWithoutMessageId = Object.fromEntries(
-        Object.entries(content).filter(([key]) => key !== "message_id")
-      );
-
-      await sendTaskContent({ id: response.id, update_type: response.taskInfo.update_type, content: contentWithoutMessageId, lang: locale });
+      await sendTaskContent({ id: response.id, update_type: response.taskInfo.update_type, content, lang: locale });
     },
     [response, sendTaskContent, locale]
   );
