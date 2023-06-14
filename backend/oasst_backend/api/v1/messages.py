@@ -1,9 +1,13 @@
+import json
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union, List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query
+from fastapi.responses import FileResponse
 from loguru import logger
+from starlette.responses import JSONResponse
+
 from oasst_backend.api import deps
 from oasst_backend.api.v1 import utils
 from oasst_backend.models import ApiClient, MessageTreeState
@@ -144,6 +148,24 @@ def get_messages_cursor(
 
     order = "desc" if desc else "asc"
     return protocol.MessagePage(prev=p, next=n, sort_key="created_date", order=order, items=items)
+
+
+@router.get("/export", response_class=JSONResponse)
+def export(
+        *,
+        message_ids: str,
+        frontend_user: deps.FrontendUserId = Depends(deps.get_frontend_user_id),
+        api_client: ApiClient = Depends(deps.get_api_client),
+        db: Session = Depends(deps.get_db),
+):
+    message_ids = message_ids.split(',')
+    pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+    messages = pr.fetch_messages(message_ids)
+    logger.debug(messages)
+    messages = utils.prepare_message_list(messages)
+    messages = [message.json() for message in messages]
+    return JSONResponse(messages)
+
 
 @router.get("/{message_id}", response_model=protocol.Message)
 def get_message(

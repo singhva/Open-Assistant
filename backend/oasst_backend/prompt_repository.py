@@ -1293,3 +1293,8 @@ WHERE message.id = cc.id;
         category_names = [category.name for category in categories]
 
         return category_names
+
+    def fetch_messages(self, message_ids: List[str]) -> List[Message]:
+        messages: List[Message] = self.db.query(Message).filter(Message.id.in_(message_ids))
+
+        return messages
