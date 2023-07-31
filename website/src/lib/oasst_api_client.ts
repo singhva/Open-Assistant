@@ -162,7 +162,7 @@ export class OasstApiClient {
       user_message_id: userMessageId,
       lang,
       assistant_response: content?.assistantResponse,
-      category: content?.category,
+      category: content?.category || "",
       ...content,
     });
   }

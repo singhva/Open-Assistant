@@ -752,21 +752,6 @@ class TreeManager:
                     )
                     self._insert_default_state(message.id, lang=message.lang)
 
-                    # new_message_id = uuid4()
-                    # logger.debug(f"Inserting reply {new_message_id} to original message")
-                    # pr.insert_message(
-                    #     message_id=new_message_id,
-                    #     frontend_message_id=''.join(random.sample(list('abcdefghijklmnopqrstuvwxyz0123456789'), 8)),
-                    #     parent_id=message.id,
-                    #     message_tree_id=message.id,
-                    #     task_id=uuid4(),
-                    #     role="assistant",
-                    #     payload=db_payload.MessagePayload(text=interaction.assistant_response),
-                    #     lang=interaction.lang or "en",
-                    #     depth=1,
-                    #     category=interaction.category
-                    # )
-
                 if not settings.DEBUG_SKIP_EMBEDDING_COMPUTATION:
                     try:
                         hf_feature_extraction.delay(interaction.text, message.id, pr.api_client.dict())
@@ -785,7 +770,9 @@ class TreeManager:
                         )
 
             case protocol_schema.InitialPromptWithResponse:
-                logger.info("Inside InitialPromptWithResponse")
+                if not interaction.category or interaction.category.strip() == "":
+                    logger.debug("Category is empty")
+                    raise OasstError(message="No prompt category specified", error_code=OasstErrorCode.INVALID_MESSAGE)
                 # here we store the text reply in the database
                 message = pr.store_text_reply(
                     text=interaction.text,
@@ -805,7 +792,7 @@ class TreeManager:
                     logger.debug(f"Inserting reply {new_message_id} to original message")
                     pr.insert_message(
                         message_id=new_message_id,
-                        frontend_message_id=''.join(random.sample(list('abcdefghijklmnopqrstuvwxyz0123456789'), 8)),
+                        frontend_message_id=str(uuid4()),
                         parent_id=message.id,
                         message_tree_id=message.id,
                         task_id=uuid4(),
@@ -815,6 +802,8 @@ class TreeManager:
                         depth=1,
                         category=interaction.category
                     )
+
+                    pr.update_children_counts(message.id)
 
             case protocol_schema.MessageRating:
                 logger.info(

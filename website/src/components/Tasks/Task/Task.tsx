@@ -127,19 +127,6 @@ export const Task = () => {
     rootEl.current && scrollToTop(rootEl.current);
   }, [task.id]);
 
-  useEffect(() => {
-    if (task.type === 'assistant_reply') {
-      const createTask: CreateAssistantReplyTask = task;
-      const messages = createTask.conversation.messages;
-      const lastMessage = messages[messages.length - 1];
-      if (replyContent) {
-        replyContent.current = { ...replyContent.current, message_id: lastMessage.id };
-      } else {
-        replyContent.current = { message_id: lastMessage.id };
-      }
-    }
-  }, [task.id, replyContent])
-
   const onReplyChanged = useCallback(
     (content: TaskContent) => {
       if (replyContent.current === null) {
@@ -211,9 +198,6 @@ export const Task = () => {
   }, [taskStatus.mode, submitResponse]);
 
   const taskTypeComponent = useMemo(() => {
-
-
-
     switch (taskInfo.category) {
       case TaskCategory.Create:
         return (

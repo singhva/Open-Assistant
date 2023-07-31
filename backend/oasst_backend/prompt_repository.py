@@ -235,6 +235,8 @@ class PromptRepository:
 
         if task.parent_message_id:
             parent_message = self.fetch_message(task.parent_message_id)
+            if not category:
+                category = parent_message.category
 
             # check tree state
             if check_tree_state:
