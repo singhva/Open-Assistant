@@ -189,6 +189,14 @@ export class OasstApiClient {
     return this.get<Message>(`/api/v1/messages/${message_id}?username=${user.id}&auth_method=${user.auth_method}`);
   }
 
+  async fetch_messages(message_ids: string[], user: BackendUserCore): Promise<Message[]> {
+    return this.post<Message[]>(`/api/v1/messages/export`, {
+      message_ids,
+      username: user.id,
+      auth_method: user.auth_method,
+    });
+  }
+
   async fetch_message_tree(message_id: string, options?: { include_spam?: boolean; include_deleted?: boolean }) {
     return this.get<{
       id: string;
