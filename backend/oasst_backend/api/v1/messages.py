@@ -20,6 +20,8 @@ from oasst_shared.schemas import protocol
 from sqlmodel import Session
 from starlette.status import HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT
 
+from inspect import currentframe, getframeinfo
+
 router = APIRouter()
 
 
@@ -150,18 +152,18 @@ def get_messages_cursor(
     return protocol.MessagePage(prev=p, next=n, sort_key="created_date", order=order, items=items)
 
 
-@router.get("/export", response_class=JSONResponse)
+@router.post("/export", response_class=JSONResponse)
 def export(
         *,
-        message_ids: str,
+        body: protocol.ExportRequest,
         frontend_user: deps.FrontendUserId = Depends(deps.get_frontend_user_id),
         api_client: ApiClient = Depends(deps.get_api_client),
         db: Session = Depends(deps.get_db),
 ):
-    message_ids = message_ids.split(',')
+    message_ids = body.message_ids
+
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     messages = pr.fetch_messages(message_ids)
-    logger.debug(messages)
     messages = utils.prepare_message_list(messages)
     messages = [message.json() for message in messages]
     return JSONResponse(messages)
@@ -180,6 +182,7 @@ def get_message(
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     message = pr.fetch_message(message_id)
+
     return utils.prepare_message(message)
 
 
@@ -197,6 +200,7 @@ def get_conv(
 
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     messages = pr.fetch_message_conversation(message_id)
+
     return utils.prepare_conversation(messages)
 
 
@@ -215,6 +219,7 @@ def get_tree(
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     message = pr.fetch_message(message_id)
+
     review_result = None if include_spam else True
     deleted = None if include_deleted else False
     tree = pr.fetch_message_tree(message.message_tree_id, review_result=review_result, deleted=deleted)
@@ -232,6 +237,7 @@ def get_message_tree_state(
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     message = pr.fetch_message(message_id=message_id, fail_if_missing=True)
     mts = pr.fetch_tree_state(message.message_tree_id)
+
     return MessageTreeStateResponse(
         message_tree_id=mts.message_tree_id,
         state=mts.state,
@@ -258,6 +264,7 @@ def put_message_tree_state(
         return tm.halt_tree(message_id, halt=halt)
 
     mts = halt_tree_tx()
+
     return MessageTreeStateResponse(
         message_tree_id=mts.message_tree_id,
         state=mts.state,
@@ -280,6 +287,7 @@ def get_children(
     """
     Get all messages belonging to the same message tree.
     """
+
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
     messages = pr.fetch_message_children(message_id, review_result=None)
     return utils.prepare_message_list(messages)
@@ -297,6 +305,7 @@ def get_descendants(
     Get a subtree which starts with this message.
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+
     message = pr.fetch_message(message_id)
     descendants = pr.fetch_message_descendants(message)
     return utils.prepare_tree(descendants, message.id)
@@ -314,6 +323,7 @@ def get_longest_conv(
     Get the longest conversation from the tree of the message.
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+
     message = pr.fetch_message(message_id)
     conv = pr.fetch_longest_conversation(message.message_tree_id)
     return utils.prepare_conversation(conv)
@@ -331,6 +341,7 @@ def get_max_children(
     Get message with the most children from the tree of the provided message.
     """
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+
     message = pr.fetch_message(message_id)
     message, children = pr.fetch_message_with_max_children(message.message_tree_id)
     return utils.prepare_tree([message, *children], message.id)
@@ -345,6 +356,7 @@ def mark_message_deleted(
     db: Session = Depends(deps.get_db),
 ):
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+
     pr.mark_messages_deleted(message_id)
 
 
@@ -357,6 +369,7 @@ def undelete_message(
     db: Session = Depends(deps.get_db),
 ):
     pr = PromptRepository(db, api_client, frontend_user=frontend_user)
+
     pr.undelete_deleted_message(message_id)
 
 

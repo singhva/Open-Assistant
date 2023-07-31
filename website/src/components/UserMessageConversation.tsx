@@ -31,15 +31,6 @@ const UserMessageConversation = () => {
 
   return (
     <div>
-      <Flex mb="2">
-        <Button onClick={() => toPreviousPage(data)} isDisabled={!data?.prev}>
-          {t("previous")}
-        </Button>
-        <Spacer />
-        <Button onClick={() => toNextPage(data)} isDisabled={!data?.next}>
-          {t("next")}
-        </Button>
-      </Flex>
       <MessageConversation enableLink messages={userMessages} showCreatedDate />
     </div>
   );

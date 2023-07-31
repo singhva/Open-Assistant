@@ -595,6 +595,8 @@ class MessageEmojiRequest(BaseModel):
     op: EmojiOp = EmojiOp.togggle
     emoji: EmojiCode
 
+class ExportRequest(BaseModel):
+    message_ids: List[str]
 
 class CreateFrontendUserRequest(User):
     show_on_leaderboard: bool = True

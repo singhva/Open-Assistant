@@ -66,6 +66,7 @@ export const API_ROUTES = {
   LIST_CHAT: "/api/chat",
   LIST_CHAT_WITH_PARMS: (params: RouteQuery) => createRoute(API_ROUTES.LIST_CHAT, params),
   GET_MESSAGE: (chat_id: string, message_id: string) => createRoute(`/api/chat/message`, { chat_id, message_id }),
+  EXPORT_MESSAGES: '/api/messages/export',
   CREATE_PROMPTER_MESSAGE: `/api/chat/prompter_message`,
   CREATE_ASSISTANT_MESSAGE: `/api/chat/assistant_message`,
   CHAT_MESSAGE_VOTE: `/api/chat/vote`,
